@@ -1,46 +1,28 @@
+using ContactBook.Maui.ViewModels;
 using Contact = ContactBook.Core.Contact;
-using ContactBook.DataProvider.Repository;
-using Contacts.BLL.BLL.ViewContactBll;
 
 namespace ContactBook.Maui.Views;
 
 public partial class AddContactPage : ContentPage
 {
-    private readonly IViewContactBll _viewContactBll;
+    private readonly ContactViewModel _viewModel;
 
-    public AddContactPage(IViewContactBll viewContactBll)
+    public AddContactPage(ContactViewModel viewModel)
 	{
 		InitializeComponent();
-        _viewContactBll = viewContactBll;
+        _viewModel = viewModel;
+
+        BindingContext = viewModel;
     }
 
-    private void btnCancel_Clicked(object sender, EventArgs e)
+    protected override void OnAppearing()
     {
-        Shell.Current.GoToAsync("..");
-    }
+        base.OnAppearing();
 
-    private async void contactCtrl_OnSave(object sender, EventArgs e)
-    {
-        var newEntity = new Contact
+        _viewModel.Contact = new Contact
         {
-            Name = contactCtrl.Name,
-            Email = contactCtrl.Email,
-            Phone = contactCtrl.Phone,
-            Address = contactCtrl.Address
+            Email = string.Empty,
+            Name = string.Empty
         };
-
-        await _viewContactBll.AddContact(newEntity);
-
-        await Shell.Current.GoToAsync("..");
-    }
-
-    private void contactCtrl_OnError(object sender, string e)
-    {
-        DisplayAlert("Error", e, "Ok");
-    }
-
-    private void contactCtrl_OnCancel(object sender, EventArgs e)
-    {
-        Shell.Current.GoToAsync("..");
     }
 }

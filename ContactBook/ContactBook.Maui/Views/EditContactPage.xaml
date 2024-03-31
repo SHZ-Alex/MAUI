@@ -3,13 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:ContactBook.Maui.Views.Controls"
              x:Class="ContactBook.Maui.Views.EditContactPage"
-             Title="Edit Contact">
-
-    <controls:ContactControl x:Name="contactCtrl"
-                             OnSave="btnUpdate_Clicked"
-                             OnError="contactCtrl_OnError"
-                             OnCancel="btnCancel_Clicked">
-        
+             Title="Изменение контакта">
+    <controls:ContactControl
+        IsForAdd="False"
+        BindingContext="{Binding .}"> 
     </controls:ContactControl>
     
 </ContentPage>

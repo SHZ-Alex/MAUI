@@ -1,50 +1,57 @@
-using Contacts.BLL.BLL.ViewContactBll;
-using Contact = ContactBook.Core.Contact;
+using ContactBook.Maui.ViewModels;
 
 namespace ContactBook.Maui.Views;
-
 
 [QueryProperty(nameof(ContactId), "Id")]
 public partial class EditContactPage : ContentPage
 {
-	private Contact contact;
-	private readonly IViewContactBll _viewContactBll;
+    public required string ContactId { get; set; }
+    
+    private readonly ContactViewModel _viewModelContact;
 
-	public EditContactPage(IViewContactBll viewContactBll)
-	{
-		InitializeComponent();
-		_viewContactBll = viewContactBll;
-	}
-
-	protected async override void OnAppearing()
-	{
-		base.OnAppearing();
-
-		contact = await _viewContactBll.GetContact(int.Parse(ContactId));
-	}
-
-	private void btnCancel_Clicked(object sender, EventArgs e)
+    public EditContactPage(ContactViewModel viewModelModel)
     {
-		Shell.Current.GoToAsync("..");
+        InitializeComponent();
+        _viewModelContact = viewModelModel;
+    }
+    
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await _viewModelContact.LoadContact(ContactId);
+        
+        BindingContext = _viewModelContact;
     }
 
-    public string ContactId { get; set; }
-
-    private async void btnUpdate_Clicked(object sender, EventArgs e)
-    {
-
-
-		contact.Name = contactCtrl.Name;
-		contact.Email = contactCtrl.Email;
-		contact.Address = contactCtrl.Address;
-		contact.Phone = contactCtrl.Phone;
-
-		await _viewContactBll.UpdateContact(int.Parse(ContactId), contact);
-        await Shell.Current.GoToAsync("..");
-    }
-
-    private void contactCtrl_OnError(object sender, string e)
-    {
-        DisplayAlert("Error", e, "Ok");
-    }
+    // private async void LoadContact()
+    // {
+    //     contact = await ViewModelContact.GetContact(int.Parse(ContactId));
+    //
+    //     contactCtrl.Name = contact.Name!;
+    //     contactCtrl.Email = contact.Email!;
+    //     contactCtrl.Phone = contact.Address!;
+    //     contactCtrl.Address = contact.Phone!;
+    // }
+    //
+    // private void btnCancel_Clicked(object sender, EventArgs e)
+    // {
+    //     Shell.Current.GoToAsync("..");
+    // }
+    //
+    //
+    // private void btnUpdate_Clicked(object sender, EventArgs e)
+    // {
+    //     contact.Name = contactCtrl.Name;
+    //     contact.Email = contactCtrl.Email;
+    //     contact.Address = contactCtrl.Address;
+    //     contact.Phone = contactCtrl.Phone;
+    //
+    //     ViewModelContact.UpdateContact(contact.Id, contact);
+    //     Shell.Current.GoToAsync("..");
+    // }
+    //
+    // private void contactCtrl_OnError(object sender, string e)
+    // {
+    //     DisplayAlert("������", e, "Ok");
+    // }
 }

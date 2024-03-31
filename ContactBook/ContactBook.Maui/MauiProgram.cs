@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using ContactBook.DataProvider.Repository;
+using ContactBook.Maui.ViewModels;
 using ContactBook.Maui.Views;
 using Contacts.BLL.BLL.ViewContactBll;
 using Contacts.BLL.Repository;
@@ -25,9 +26,12 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-        
+
         builder.Services.AddScoped<IContactRepository, ContactRepository>();
         builder.Services.AddScoped<IViewContactBll, ViewContactBll>();
+
+        builder.Services.AddSingleton<ContactsViewModel>();
+        builder.Services.AddSingleton<ContactViewModel>();
 
         builder.Services.AddSingleton<ContactsPage>();
         builder.Services.AddSingleton<EditContactPage>();
