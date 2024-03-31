@@ -1,15 +1,18 @@
-using ContactBook.Maui.Repository;
 using System.Collections.ObjectModel;
-using Contact = ContactBook.Maui.Models.Contact;
+using Contacts.BLL.BLL.ViewContactBll;
+using Contact = ContactBook.Core.Contact;
 
 namespace ContactBook.Maui.Views;
 
 public partial class ContactsPage : ContentPage
 {
-	public ContactsPage()
+    private readonly IViewContactBll _viewContactBll;
+
+    public ContactsPage(IViewContactBll viewContactBll)
 	{
 		InitializeComponent();
-	}
+        _viewContactBll = viewContactBll;
+    }
 
     protected override void OnAppearing()
     {
@@ -44,23 +47,24 @@ public partial class ContactsPage : ContentPage
         Shell.Current.GoToAsync(nameof(AddContactPage));
     }
 
-    private void Delete_Clicked(object sender, EventArgs e)
+    private async void Delete_Clicked(object sender, EventArgs e)
     {
         var contact = (Contact)(sender as MenuItem).CommandParameter;
-        ContactRepository.DeleteContact(contact.Id);
+        
+        await _viewContactBll.DeleteContact(contact.Id);
 
         LoadContacts();
     }
 
-    private void LoadContacts()
+    private async void LoadContacts()
     {
-        var contacts = new ObservableCollection<Contact>(ContactRepository.GetContacts);
+        var contacts = new ObservableCollection<Contact>(await _viewContactBll.GetContacts(string.Empty));
         listContacts.ItemsSource = contacts;
     }
 
-    private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
+    private async void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
     {
-        var contacts = new ObservableCollection<Contact>(ContactRepository.SearchContacts(((SearchBar)sender).Text));
+        var contacts = new ObservableCollection<Contact>(await _viewContactBll.GetContacts(((SearchBar)sender).Text));
         listContacts.ItemsSource = contacts;
     }
 }

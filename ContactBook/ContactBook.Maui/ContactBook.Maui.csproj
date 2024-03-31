@@ -75,4 +75,9 @@
       </MauiXaml>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ContactBook.BLL\ContactBook.BLL.csproj" />
+      <ProjectReference Include="..\ContactBook.DataProvider\ContactBook.DataProvider.csproj" />
+    </ItemGroup>
+
 </Project>

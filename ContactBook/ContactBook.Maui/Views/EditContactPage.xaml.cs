@@ -1,5 +1,5 @@
-using ContactBook.Maui.Repository;
-using Contact = ContactBook.Maui.Models.Contact;
+using Contacts.BLL.BLL.ViewContactBll;
+using Contact = ContactBook.Core.Contact;
 
 namespace ContactBook.Maui.Views;
 
@@ -8,33 +8,29 @@ namespace ContactBook.Maui.Views;
 public partial class EditContactPage : ContentPage
 {
 	private Contact contact;
+	private readonly IViewContactBll _viewContactBll;
 
-	public EditContactPage()
+	public EditContactPage(IViewContactBll viewContactBll)
 	{
 		InitializeComponent();
+		_viewContactBll = viewContactBll;
 	}
 
-    private void btnCancel_Clicked(object sender, EventArgs e)
+	protected async override void OnAppearing()
+	{
+		base.OnAppearing();
+
+		contact = await _viewContactBll.GetContact(int.Parse(ContactId));
+	}
+
+	private void btnCancel_Clicked(object sender, EventArgs e)
     {
 		Shell.Current.GoToAsync("..");
     }
 
-    public string ContactId
-    {
-		set { 
-			contact = ContactRepository.GetContactById(int.Parse(value));
+    public string ContactId { get; set; }
 
-			if (contact != null)
-			{
-                contactCtrl.Name = contact.Name;
-                contactCtrl.Email = contact.Email;
-                contactCtrl.Phone = contact.Address;
-                contactCtrl.Address = contact.Phone;
-			}
-		} 
-	}
-
-    private void btnUpdate_Clicked(object sender, EventArgs e)
+    private async void btnUpdate_Clicked(object sender, EventArgs e)
     {
 
 
@@ -43,12 +39,12 @@ public partial class EditContactPage : ContentPage
 		contact.Address = contactCtrl.Address;
 		contact.Phone = contactCtrl.Phone;
 
-        ContactRepository.UpdateContact(contact.Id, contact);
-        Shell.Current.GoToAsync("..");
+		await _viewContactBll.UpdateContact(int.Parse(ContactId), contact);
+        await Shell.Current.GoToAsync("..");
     }
 
     private void contactCtrl_OnError(object sender, string e)
     {
-        DisplayAlert("Ошибка", e, "Ok");
+        DisplayAlert("Error", e, "Ok");
     }
 }
